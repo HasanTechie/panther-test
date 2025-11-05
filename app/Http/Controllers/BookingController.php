@@ -22,7 +22,11 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()]);
+            return response()->json([
+                'errors' => $validator->errors(),
+                'message' => 'Request something like api/bookings?week=2025-11-05',
+            ]);
+
         }
 
         $date = Carbon::parse($request->week);
@@ -43,7 +47,7 @@ class BookingController extends Controller
     {
         //
         $clients = Client::all();
-        $users = User::all();
+        $users = User::latest()->get();
 
         // Return the form view
         return view('bookings.create', compact('clients', 'users'));
@@ -64,6 +68,12 @@ class BookingController extends Controller
             'client_id' => 'required|exists:clients,id',
         ]);
 
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         // Check for overlapping bookings for the same user
         $overlapping = Booking::where('user_id', $request->user_id)
             ->where(function ($query) use ($request) {
@@ -73,14 +83,15 @@ class BookingController extends Controller
             ->exists();
 
         if ($overlapping) {
-            return 'The user has an overlapping booking';
+            return redirect()
+                ->back()
+                ->withErrors(['booking' => 'The user has an overlapping booking'])
+                ->withInput();
         }
 
         $booking = Booking::create($request->all());
 
-        return redirect()
-            ->route('dashboard')
-            ->with('success', 'Booking created successfully!');
+        return redirect()->back()->with('success', 'Booking created successfully!');
     }
 
     /**
@@ -110,8 +121,11 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Booking $booking)
+    public function destroy(\App\Models\Booking $booking)
     {
-        //
+        $booking->delete();
+
+        return redirect()->route('dashboard')->with('success', 'Booking deleted successfully.');
     }
+
 }

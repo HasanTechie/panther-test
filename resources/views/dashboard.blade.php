@@ -1,17 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Bookings') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
 
                     @php
-                        $bookings = \App\Models\Booking::with(['client','user'])->get();
+                        $bookings = \App\Models\Booking::with(['client','user'])->latest()->get();
 //                        dd($bookings);
                     @endphp
 
@@ -26,6 +26,7 @@
                                     <th class="px-4 py-3 text-left border-b">Client Name</th>
                                     <th class="px-4 py-3 text-left border-b">Start Time</th>
                                     <th class="px-4 py-3 text-left border-b">End Time</th>
+                                    <th class="px-4 py-3 text-left border-b">Delete</th>
                                 </tr>
                                 </thead>
 
@@ -42,6 +43,17 @@
                                         <td class="px-4 py-2">{{ $booking->client->name }}</td>
                                         <td class="px-4 py-2">{{ $booking->start_time }}</td>
                                         <td class="px-4 py-2">{{ $booking->end_time }}</td>
+                                        <td class="px-4 py-2 text-center">
+                                            <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button
+                                                    type="submit"
+                                                    class="bg-red-600 text-white px-3 py-1.5 rounded-md hover:bg-red-700 transition text-xs font-medium shadow-sm"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </form>
                                     </tr>
                                 @empty
                                     <tr>

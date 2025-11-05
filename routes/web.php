@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/bookings/create' , [BookingController::class, 'create'])->name('bookings.create');
     Route::post('/bookings/store' , [BookingController::class, 'store'])->name('bookings.store');
+    Route::delete('/bookings/{booking}' , [BookingController::class, 'destroy'])->name('bookings.destroy');
 
 });
 
