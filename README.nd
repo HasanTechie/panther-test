@@ -1,0 +1,10 @@
+# Bookings App with API
+
+A simple Laravel app for managing user bookings.
+
+## Installation
+
+```bash
+composer install
+npm install && npm run dev
+php artisan migrate --seed
