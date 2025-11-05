@@ -12,7 +12,6 @@
 
                     @php
                         $bookings = \App\Models\Booking::with(['client','user'])->latest()->get();
-//                        dd($bookings);
                     @endphp
 
                     <div class="w-full px-4">
