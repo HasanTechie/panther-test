@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Client;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,9 +14,26 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $validator = Validator::make($request->all(), [
+            'week' => 'required|date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+
+        $date = Carbon::parse($request->week);
+        $startOfWeek = $date->startOfWeek()->toDateTimeString(); // Monday
+        $endOfWeek = $date->endOfWeek()->toDateTimeString();   // Sunday
+
+        $bookings = Booking::with(['user', 'client'])
+            ->whereBetween('start_time', [$startOfWeek, $endOfWeek])
+            ->get();
+
+        return response()->json($bookings);
     }
 
     /**
