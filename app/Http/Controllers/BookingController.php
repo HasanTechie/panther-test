@@ -72,6 +72,13 @@ class BookingController extends Controller
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $validator->errors(),
+                    'message' => 'Validation failed',
+                ], 422);
+            }
         }
 
         // Check for overlapping bookings for the same user
@@ -83,6 +90,13 @@ class BookingController extends Controller
             ->exists();
 
         if ($overlapping) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => ['booking' => ['The user has an overlapping booking.']],
+                    'message' => 'Overlapping booking detected'
+                ], 409);
+
+            }
             return redirect()
                 ->back()
                 ->withErrors(['booking' => 'The user has an overlapping booking'])
