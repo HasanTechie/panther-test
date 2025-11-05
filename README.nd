@@ -1,4 +1,4 @@
-# Bookings App with API
+# Bookings App
 
 A simple Laravel app for managing user bookings.
 
@@ -6,5 +6,15 @@ A simple Laravel app for managing user bookings.
 
 ```bash
 composer install
-npm install && npm run dev
+php artisan key:generate
 php artisan migrate --seed
+npm install && npm run dev
+
+
+-User can create/delete Booking. No overlapping allowed and end_datetime cant be before start_datetime.
+-Api endpoints at /api/bookings?week=2025-11-05
+-3 feature tests created.
+*Bookings creation.
+*Booking Creation with Overlapping check
+*Retrieval of Bookings by Week via api.
+
