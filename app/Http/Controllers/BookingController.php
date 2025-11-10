@@ -69,9 +69,6 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -79,6 +76,10 @@ class BookingController extends Controller
                     'message' => 'Validation failed',
                 ], 422);
             }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         // Check for overlapping bookings for the same user
